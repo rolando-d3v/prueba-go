@@ -7,7 +7,6 @@ import (
 	"github.com/rolando-d3v/prueba/src/config"
 )
 
-var dbx = config.InitDB()
 
 type User struct {
 	ID   int    `db:"id_respuesta_i" json:"id_role_i"`
@@ -18,7 +17,7 @@ func GetUsers(c *fiber.Ctx) error {
 	var users []User
 	query := `SELECT id_respuesta_i, respuesta_t FROM respuestas`
 	// query := `SELECT id_role_i, desc_corta_v FROM role`
-	err := dbx.Select(&users, query)
+	err := config.DB.Select(&users, query)
 	if err != nil {
 	    return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
 	        "error": "Failed to fetch users",
