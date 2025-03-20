@@ -471,15 +471,23 @@ import (
 	"os"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/rolando-d3v/prueba/src/api/user"
+	"github.com/rolando-d3v/prueba/src/config"
 )
 
 func main() {
 	app := fiber.New()
 
+	//statticos
+	app.Static("/public", "./public")
+
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World!")
+		return c.SendString("Hello, World! go")
 	})
 
+	app.Get("/users", user.GetUsers)
+
+	config.InitDB()
 
 	port := os.Getenv("PORT")
 	if port == "" {
