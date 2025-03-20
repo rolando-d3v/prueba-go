@@ -9,8 +9,8 @@ import (
 
 
 type User struct {
-	ID   int    `db:"id_respuesta_i" json:"id_role_i"`
-	Name string `db:"respuesta_t" json:"desc_corta_v"`
+	ID   int    `db:"id_respuesta_i" json:"id_respuesta_i"`
+	Name string `db:"respuesta_t" json:"respuesta_t"`
 }
 
 func GetUsers(c *fiber.Ctx) error {

@@ -2,68 +2,6 @@
 
 // import (
 // 	"fmt"
-// 	"log"
-
-// 	"github.com/ebfe/scard"
-// )
-
-// func main() {
-// 	// Crear un contexto
-// 	ctx, err := scard.EstablishContext()
-// 	if err != nil {
-// 		log.Fatalf("Error al establecer el contexto: %s", err)
-// 	}
-// 	defer ctx.Release()
-// 	fmt.Println(ctx)
-
-// 	// Obtener lista de lectores disponibles
-// 	readers, err := ctx.ListReaders()
-// 	if err != nil {
-// 		log.Fatalf("Error al obtener la lista de lectores: %s", err)
-// 	}
-// 	if len(readers) == 0 {
-// 		log.Fatal("No se encontraron lectores de tarjetas inteligentes")
-// 	}
-
-// 	// Seleccionar el primer lector de la lista
-// 	reader := readers[0]
-
-// 	// Conectar al lector
-// 	card, err := ctx.Connect(reader, scard.ShareExclusive, scard.ProtocolAny)
-// 	fmt.Println(card)
-// 	fmt.Println(scard.AttrChannelId)
-// 	fmt.Println(scard.AttrAsyncProtocolTypes)
-// 	fmt.Println(scard.AttrAtrString)
-// 	fmt.Println(scard.AttrVendorIfdSerialNo)
-// 	if err != nil {
-// 		log.Fatalf("Error al conectar al lector %s: %s", reader, err)
-// 	}
-// 	defer card.Disconnect(scard.LeaveCard)
-
-// 	// Enviar comando APDU para leer datos de la tarjeta
-// 	// El comando APDU específico puede variar dependiendo del tipo de tarjeta y la aplicación
-// 	// apduCommand := []byte{0x3B, 0x00, 0x05, 0x00, 0x00} // SELECT MF
-// 	// apduCommand := []byte{0x00, 0xA4, 0x04, 0x00, 0x0A, 0xD2, 0x76, 0x00, 0x00, 0x01, 0x24, 0x01, 0x00, 0x00} // Ejemplo: Leer los primeros 255 bytes
-// 	// apduCommand := []byte{0x00, 0xB0, 0x00, 0x00, 0xFF} // Ejemplo: Leer los primeros 255 bytes
-// 	apduCommand := []byte{0x00, 0xA4, 0x04, 0x00, 0x0A, 0xA0, 0x00, 0x00, 0x01, 0x67, 0x45, 0x4E, 0x02, 0x01, 0x01} // Ejemplo: Leer los primeros 255 bytes
-// 	response, err := card.Transmit(apduCommand)
-
-// 	if err != nil {
-// 		log.Fatalf("Error al transmitir comando APDU: %s", err)
-// 	}
-
-// 	if response[len(response)-2] != 0x90 || response[len(response)-1] != 0x00 {
-// 		log.Fatalf("Error en la respuesta APDU: %X", response)
-// 	}
-
-// 	// fmt.Println(response)
-// 	fmt.Printf("Datos leídos de la tarjeta: %X\n", response)
-// }
-
-// package main
-
-// import (
-// 	"fmt"
 // 	"github.com/ebfe/scard"
 // 	"os"
 // )
@@ -467,10 +405,14 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/rolando-d3v/prueba/src/api/user"
 	"github.com/rolando-d3v/prueba/src/config"
 )
@@ -478,10 +420,34 @@ import (
 func main() {
 	app := fiber.New()
 
+	//middleware
+	// app.Get("/swagger/*", fiberSwagger.WrapHandler)
+	app.Use(cors.New())
+	app.Use(logger.New()) //tipo morgan
+
 	//statticos
 	app.Static("/public", "./public")
 
 	app.Get("/", func(c *fiber.Ctx) error {
+
+		start := time.Now()
+
+		// Crear un slice con 9,000,000 elementos
+		registros := make([]int, 90000000)
+		for i := 0; i < 90000000; i++ {
+			registros[i] = i + 1
+		}
+
+		// Leer los registros con un bucle `for`
+		for i := 0; i < len(registros); i++ {
+			dato := registros[i] // Simulación de lectura
+			_ = dato             // Evitar warnings de variable no utilizada
+		}
+
+		// Calcular el tiempo total transcurrido
+		elapsed := time.Since(start)
+		fmt.Printf("Tiempo total: %s\n", elapsed)
+
 		return c.SendString("Hello, World! go")
 	})
 
